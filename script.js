@@ -1,7 +1,8 @@
+import { WEATHER_CODES } from "./data.js";
 const form = document.querySelector("#form");
 const cityInput = document.querySelector("#city-search");
 const message = document.querySelector("#error-msg");
-
+const list = document.querySelector("#days-cards");
 const loading = document.createElement("p");
 loading.className = "hidden mt-5 text-center text-sm text-slate-300";
 loading.textContent = "Loading...";
@@ -9,8 +10,8 @@ form.after(loading);
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-
   const city = cityInput.value.trim();
+
   if (!city) {
     message.textContent = "Please enter a city name.";
     message.classList.remove("hidden");
@@ -20,87 +21,133 @@ form.addEventListener("submit", async (event) => {
   message.classList.add("hidden");
   loading.classList.remove("hidden");
 
-
-  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
   fetch(url)
-  .then((response)=>  {
-    if(!response.ok){
-      throw new Error("eror" + response.status)
-    }
-    return response.json()
-  })
-  .then((cordinates) => {
-    
-    
-    const lat = cordinates.results[0].latitude
-    const lon = cordinates.results[0].longitude
-    
-    return {lat , lon}
-  })
-  .then((data)=>{
-    const url1 = `https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&timezone=auto`
-    fetch(url1)
-    .then((reponse1)=>{
-      if(!reponse1.ok){
-        throw new Error("error" + reponse1.status)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("eror" + response.status);
       }
-      return reponse1.json()
+      return response.json();
     })
-    .then((data) =>{
+    .then((cordinates) => {
+      const place = cordinates.results[0];
+      const lat = cordinates.results[0].latitude;
+      const lon = cordinates.results[0].longitude;
 
-      console.log(data);
+      return { lat, lon, city: place.name, country: place.country };
+    })
+    .then((data) => {
+      const url1 = `https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&timezone=auto`;
+      return fetch(url1)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("error" + response.status);
+          }
+          return response.json();
+        })
       
-      const time = data.current.time
-      const temperature = data.current.temperature_2m
-      const humidity = data.current.relative_humidity_2m
-      const weather_code = data.current.weather_code
-      const wind_speed = data.current.wind_speed
-      return  {temperature,humidity,weather_code,wind_speed}
-
+        .then((forecast) => {
+          const datas = {
+            city: data.city,
+            country: data.country,
+            time: forecast.current.time,
+            temperature: forecast.current.temperature_2m,
+            humidity: forecast.current.relative_humidity_2m,
+            weather_code: forecast.current.weather_code,
+            wind_speed: forecast.current.wind_speed_10m,
+          };
+          return datas
+          
+        })
+        .then((data) => {
+          render(data);
+        });
     })
-    .then((data)=>{
-
+    .catch((error) => {
+      message.textContent = "Could not find the city. Please try again.";
+      message.classList.remove("hidden");
+      console.error(error);
     })
-  })
-  .catch ((error) => {
-    message.textContent = "Could not find the city. Please try again.";
-    message.classList.remove("hidden");
-    console.error(error);
-  }) 
-  .finally(() => {
-    loading.classList.add("hidden");
-  })
-
+    .finally(() => {
+      loading.classList.add("hidden");
+    });
 });
 
+function render(data) {
+  list.replaceChildren();
+  const li = document.createElement("li");
+  li.className =
+    "grid min-h-[14.4rem] grid-cols-1 items-center gap-6 rounded-[2rem] border border-slate-700 bg-gradient-to-r from-amber-950/70 via-slate-800 to-slate-800 px-6 py-5 shadow-xl sm:grid-cols-[1fr_auto_1fr] sm:px-8 sm:py-[1.8rem]";
+  const divname = document.createElement("div");
+  const h2 = document.createElement("h2");
+  h2.className = "text-3xl font-bold sm:text-4xl";
+  h2.textContent = `${data.city} , ${data.country}`;
 
-function render(data){
-  const li = document.createElement("li")
-  li.className = "grid min-h-[14.4rem] grid-cols-1 items-center gap-6 rounded-[2rem] border border-slate-700 bg-gradient-to-r from-amber-950/70 via-slate-800 to-slate-800 px-6 py-5 shadow-xl sm:grid-cols-[1fr_auto_1fr] sm:px-8 sm:py-[1.8rem]"
-  const divname = document.createElement("div")
-  const h2 = document.createElement("h2")
-  h2.className = "text-3xl font-bold sm:text-4xl"
-  h2.textContent = city
-
-  const date = document.createElement("p")
-  date.className ="mt-2 text-slate-300"
-  date.textContent = data.time 
-
-  const wheatherstate = document.createElement("p")
-  wheatherstate.className ="mt-1 text-slate-300"
-  wheatherstate.textContent = WEATHER_CODES.data.wind_speed
-
-  divname.append(h2,date,wheatherstate)
+  const date = document.createElement("p");
+  date.className = "mt-2 text-slate-300";
+  date.textContent = new Date(data.time).toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+//
+  const wheatherstate = document.createElement("p");
+  wheatherstate.className = "mt-1 text-slate-300";
+  const iconnumber = data.weather_code
+  wheatherstate.textContent = WEATHER_CODES[iconnumber].label
+  
   
 
+  divname.append(h2, date, wheatherstate);
+
+  const divweather = document.createElement("div");
+  divweather.className = "flex items-center justify-center gap-3";
   
+    const icon = WEATHER_CODES[iconnumber].icon
+
+  const logo = document.createElement("p");
+  logo.className = "text-6xl";
+    logo.textContent = icon
 
 
+
+
+
+
+
+  const temperature = document.createElement("p");
+  temperature.className = "text-7xl font-semibold tracking-tight sm:text-8xl";
+  temperature.textContent = `${Math.round(data.temperature)}°C`;
+  divweather.append(logo, temperature);
+
+  const divstats = document.createElement("div");
+  divstats.className = "grid grid-cols-2 gap-3";
+
+  const divhumidity = document.createElement("div");
+  divhumidity.className = "rounded-2xl bg-slate-950/50 p-4 sm:p-5";
+  const humiditytitle = document.createElement("p");
+  humiditytitle.className = "text-sm text-slate-300";
+  humiditytitle.textContent = "Humidity";
+  const humidity = document.createElement("p");
+  humidity.className = "mt-2 text-2xl font-semibold sm:text-3xl";
+  humidity.textContent = `${data.humidity}%`;
+  divhumidity.append(humiditytitle, humidity);
+
+  const divwind = document.createElement("div");
+  divwind.className = "rounded-2xl bg-slate-950/50 p-4 sm:p-5";
+  const windtitle = document.createElement("p");
+  windtitle.className = "text-sm text-slate-300";
+  windtitle.textContent = "Wind speed";
+  const wind = document.createElement("p");
+  wind.className = "mt-2 text-2xl font-semibold sm:text-3xl";
+  wind.textContent = `${data.wind_speed} km/h`;
+  divwind.append(windtitle, wind);
+
+  divstats.append(divhumidity, divwind);
+  li.append(divname, divweather, divstats);
+  list.prepend(li);
 }
-
-
-
-
 
 /*
 <li class="grid min-h-[14.4rem] grid-cols-1 items-center gap-6 rounded-[2rem] border border-slate-700 bg-gradient-to-r from-amber-950/70 via-slate-800 to-slate-800 px-6 py-5 shadow-xl sm:grid-cols-[1fr_auto_1fr] sm:px-8 sm:py-[1.8rem]">
@@ -125,13 +172,3 @@ function render(data){
               </div>
             </li>
 */
-
-
-
-
-
-
-
-
-
-
