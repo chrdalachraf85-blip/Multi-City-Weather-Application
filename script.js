@@ -108,11 +108,8 @@ function render(data) {
 
   const logo = document.createElement("p");
   logo.className = "text-6xl";
+
     logo.textContent = icon
-
-
-
-
 
 
 
@@ -149,26 +146,3 @@ function render(data) {
   list.prepend(li);
 }
 
-/*
-<li class="grid min-h-[14.4rem] grid-cols-1 items-center gap-6 rounded-[2rem] border border-slate-700 bg-gradient-to-r from-amber-950/70 via-slate-800 to-slate-800 px-6 py-5 shadow-xl sm:grid-cols-[1fr_auto_1fr] sm:px-8 sm:py-[1.8rem]">
-              <div>
-                <h2 class="text-3xl font-bold sm:text-4xl">Nador, Morocco</h2>
-                <p class="mt-2 text-slate-300">Tuesday, 10 November 2026</p>
-                <p class="mt-1 text-slate-300">Sunny</p>
-              </div>
-              <div class="flex items-center justify-center gap-3">
-                <p class="text-6xl" aria-label="Sunny weather">☀️</p>
-                <p class="text-7xl font-semibold tracking-tight sm:text-8xl">24°</p>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div class="rounded-2xl bg-slate-950/50 p-4 sm:p-5">
-                  <p class="text-sm text-slate-300">Humidity</p>
-                  <p class="mt-2 text-2xl font-semibold sm:text-3xl">48%</p>
-                </div>
-                <div class="rounded-2xl bg-slate-950/50 p-4 sm:p-5">
-                  <p class="text-sm text-slate-300">Wind speed</p>
-                  <p class="mt-2 text-2xl font-semibold sm:text-3xl">14 km/h</p>
-                </div>
-              </div>
-            </li>
-*/
