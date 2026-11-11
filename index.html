@@ -25,11 +25,11 @@
 
       <div class="flex min-h-[calc(100vh-100px)] justify-center p-4 sm:p-5 lg:p-6">
         <section aria-labelledby="forecast-title" class="w-[90%] rounded-2xl border border-cyan-950 bg-gradient-to-br from-[#061c2a] to-[#041824] p-3 sm:p-4 lg:p-5">
-          <ul id="days-cards" class="m-0 list-none space-y-2.5 p-0 [&>li]:mx-auto [&>li]:w-[90%]" aria-label="Five day forecast">
+          <ul id="days-cards" class="m-0 grid grid-cols-4 gap-2.5 list-none p-0 [&>li:first-child]:col-span-4 [&>li]:mx-auto [&>li]:w-[90%]" aria-label="Five day forecast">
             
             
           </ul>
-          <p id="error-msg" class="hidden mt-5 text-center text-sm text-rose-300" role="alert"></p>
+          <div id="error-msg" class="hidden"></div>
           
         </section>
       </div>

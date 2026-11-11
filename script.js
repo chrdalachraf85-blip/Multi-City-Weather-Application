@@ -22,6 +22,7 @@ form.addEventListener("submit", async (event) => {
   loading.classList.remove("hidden");
 
   const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
+  let urldaily;
   fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -38,6 +39,7 @@ form.addEventListener("submit", async (event) => {
     })
     //////////////////////////////////////
     .then((data) => {
+      urldaily = `https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min`;
       const url1 = `https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&timezone=auto`;
       return fetch(url1)
         .then((response) => {
@@ -67,8 +69,8 @@ form.addEventListener("submit", async (event) => {
     .then((data) => {
       return fetch(urldaily)
         .then((response) => {
-          if(!response.ok){
-            throw new Error("The rest can't be loaded")
+          if (!response.ok) {
+            throw new Error("The rest can't be loaded");
           }
           return response.json();
         })
@@ -83,22 +85,54 @@ form.addEventListener("submit", async (event) => {
               weather_code: data.daily.weather_code[i],
             });
           }
-          
+          console.log(datasobject)
           return datasobject;
         });
     })
     .then((card) => {
-      render5days(card)
+
+      card.forEach(render5days)
+      
     })
     .catch((error) => {
-      message.textContent = "Could not find the city. Please try again.";
+
+      const alert = document.createElement("div");
+      alert.setAttribute("role", "alert");
+      alert.className = "flex flex-col gap-4 rounded-2xl border border-rose-400/70 bg-rose-950/50 p-5 text-rose-100 shadow-lg sm:flex-row sm:items-center";
+
+      const content = document.createElement("div");
+      content.className = "flex items-center gap-4";
+
+      const icon = document.createElement("span");
+      icon.setAttribute("aria-hidden", "true");
+      icon.className = "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-rose-400 text-2xl font-bold text-rose-400";
+      icon.textContent = "!";
+
+      const text = document.createElement("div");
+      const title = document.createElement("h2");
+      title.className = "text-lg font-semibold text-rose-300";
+      title.textContent = "City not found";
+
+      const description = document.createElement("p");
+      description.className = "mt-1 text-sm text-rose-100/80";
+      description.textContent = "Check the spelling or try another city.";
+      text.append(title, description);
+      content.append(icon, text);
+
+      const retryButton = document.createElement("button");
+      retryButton.type = "button";
+      retryButton.className = "rounded-xl border border-cyan-400 px-5 py-2.5 font-medium text-cyan-300 transition hover:bg-cyan-400/10 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2 focus:ring-offset-rose-950 sm:ml-auto";
+      retryButton.textContent = "Try again";
+
+      alert.append(content, retryButton);
+      message.replaceChildren(alert);
+
       message.classList.remove("hidden");
       console.error(error);
     })
     .finally(() => {
       loading.classList.add("hidden");
     });
-  const urldaily = `https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weather_code,temperature_2m_max,temperature_2m_min`;
 });
 
 function render(data) {
@@ -170,52 +204,229 @@ function render(data) {
   list.prepend(li);
 }
 
+// datasobject.push({
+//               time: data.daily.time[i],
+//               maxtemp: data.daily.temperature_2m_max[i],
+//               mintemp: data.daily.temperature_2m_min[i],
+//               weather_code: data.daily.weather_code[i],
+//             });
 
 
 
 
 
 
+
+
+
+
+/* <li class="mx-auto w-full max-w-xs rounded-2xl border border-white/10 bg-slate-900 p-5 text-white shadow-lg">
+  <p class="text-sm font-medium text-slate-400"></p>
+  <div class="mt-4 flex items-center justify-between">
+    <div>
+      <p class="text-3xl font-semibold">🌤️</p>
+      <p class="mt-2 text-sm text-slate-300">Forecast</p>
+    </div>
+    <div class="text-right">
+      <p class="text-2xl font-semibold"> undefined°</p>
+      <p class="mt-1 text-sm text-slate-400">Low undefined°</p>
+    </div>
+  </div>
+</li>; */
 
 function render5days(data) {
-  const card = document.createElement("li");
-  card.className = "mx-auto w-full max-w-xs rounded-2xl border border-white/10 bg-slate-900 p-5 text-white shadow-lg";
-
-  const date = new Date(`${data.date ?? data.time}T00:00:00`);
-  const day = document.createElement("p");
-  day.className = "text-sm font-medium text-slate-400";
-  day.textContent = Number.isNaN(date.getTime())
-    ? String(data.date ?? data.time ?? "")
-    : date.toLocaleDateString("en-US", { weekday: "long" });
-
+  
+  const li = document.createElement("li")
+  li.className ="mx-auto w-full max-w-xs rounded-2xl border border-white/10 bg-slate-900 p-5 text-white shadow-lg"
+  
+  const date = document.createElement("p")
+  date.className ="text-sm font-medium text-slate-400"
+  date.textContent = new Date(data.time).toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
   const details = document.createElement("div");
-  details.className = "mt-4 flex items-center justify-between";
+  details.className ="mt-4 flex items-center justify-between"
 
-  const weather = document.createElement("div");
+
+  const weather = document.createElement("div")
   const icon = document.createElement("p");
   icon.className = "text-3xl font-semibold";
-  const weatherCode = data.weather_code;
-  const weatherInfo = WEATHER_CODES[weatherCode];
-  icon.textContent = data.icon ?? weatherInfo?.icon ?? "🌤️";
+  
+  const iconnumber = data.weather_code;
 
+  //////////////////////
+  icon.textContent = WEATHER_CODES[iconnumber].icon;
   const description = document.createElement("p");
   description.className = "mt-2 text-sm text-slate-300";
-  description.textContent = weatherInfo?.label ?? "Forecast";
+  description.textContent = WEATHER_CODES[iconnumber].label
+
   weather.append(icon, description);
 
   const temperatures = document.createElement("div");
   temperatures.className = "text-right";
 
+
   const high = document.createElement("p");
   high.className = "text-2xl font-semibold";
-  high.textContent = `${data.maxtemp ?? data.maxTemp}°`;
+  high.textContent = `${data.maxtemp}°`;
 
   const low = document.createElement("p");
   low.className = "mt-1 text-sm text-slate-400";
-  low.textContent = `Low ${data.mintemp ?? data.minTemp}°`;
+  low.textContent = `Lowest ${data.mintemp}°`;
+
   temperatures.append(high, low);
 
   details.append(weather, temperatures);
-  card.append(day, details);
-  list.append(card);
+  li.append(date, details);
+  list.append(li);
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // weather.append(icon, description);
+  
+
+
+  // const temperatures = document.createElement("div");
+  // temperatures.className = "text-right";
+  
+  // const high = document.createElement("p");
+  // high.className = "text-2xl font-semibold";
+  // high.textContent = ` ${data.maxtemp}°`;
+  
+  // const low = document.createElement("p");
+  // low.className = "mt-1 text-sm text-slate-400";
+  // low.textContent = `Low ${data.mintemp}°`;
+  // temperatures.append(high, low);
+  
+
+
+
+  // details.append(weather, temperatures);
+  // card.append(day, details);
+  // list.append(card);
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// const card = document.createElement("li");
+// card.className =
+//   "mx-auto w-full max-w-xs rounded-2xl border border-white/10 bg-slate-900 p-5 text-white shadow-lg";
+
+// const date = new Date(`${data.time}T00:00:00`);
+// const day = document.createElement("p");
+// day.className = "text-sm font-medium text-slate-400";
+// day.textContent = Number.isNaN(date.getTime())
+//   ? String(data.date ?? data.time ?? "")
+//   : date.toLocaleDateString("en-US", { weekday: "long" });
+
+
+
+// const details = document.createElement("div");
+// details.className = "mt-4 flex items-center justify-between";
+
+// const weather = document.createElement("div");
+// const icon = document.createElement("p");
+// icon.className = "text-3xl font-semibold";
+
+// //////
+// const weatherCode = data.weather_code;
+// const weatherInfo = WEATHER_CODES[weatherCode];
+// icon.textContent = data.icon ?? weatherInfo?.icon ?? "🌤️";
+// ///////
+// const description = document.createElement("p");
+// description.className = "mt-2 text-sm text-slate-300";
+// description.textContent = weatherInfo?.label ?? "Forecast";
+// ////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
