@@ -87,6 +87,9 @@ form.addEventListener("submit", async (event) => {
           return datasobject;
         });
     })
+    .then((card) => {
+      render5days(card)
+    })
     .catch((error) => {
       message.textContent = "Could not find the city. Please try again.";
       message.classList.remove("hidden");
@@ -165,4 +168,54 @@ function render(data) {
   divstats.append(divhumidity, divwind);
   li.append(divname, divweather, divstats);
   list.prepend(li);
+}
+
+
+
+
+
+
+
+
+function render5days(data) {
+  const card = document.createElement("li");
+  card.className = "mx-auto w-full max-w-xs rounded-2xl border border-white/10 bg-slate-900 p-5 text-white shadow-lg";
+
+  const date = new Date(`${data.date ?? data.time}T00:00:00`);
+  const day = document.createElement("p");
+  day.className = "text-sm font-medium text-slate-400";
+  day.textContent = Number.isNaN(date.getTime())
+    ? String(data.date ?? data.time ?? "")
+    : date.toLocaleDateString("en-US", { weekday: "long" });
+
+  const details = document.createElement("div");
+  details.className = "mt-4 flex items-center justify-between";
+
+  const weather = document.createElement("div");
+  const icon = document.createElement("p");
+  icon.className = "text-3xl font-semibold";
+  const weatherCode = data.weather_code;
+  const weatherInfo = WEATHER_CODES[weatherCode];
+  icon.textContent = data.icon ?? weatherInfo?.icon ?? "🌤️";
+
+  const description = document.createElement("p");
+  description.className = "mt-2 text-sm text-slate-300";
+  description.textContent = weatherInfo?.label ?? "Forecast";
+  weather.append(icon, description);
+
+  const temperatures = document.createElement("div");
+  temperatures.className = "text-right";
+
+  const high = document.createElement("p");
+  high.className = "text-2xl font-semibold";
+  high.textContent = `${data.maxtemp ?? data.maxTemp}°`;
+
+  const low = document.createElement("p");
+  low.className = "mt-1 text-sm text-slate-400";
+  low.textContent = `Low ${data.mintemp ?? data.minTemp}°`;
+  temperatures.append(high, low);
+
+  details.append(weather, temperatures);
+  card.append(day, details);
+  list.append(card);
 }
