@@ -36,6 +36,7 @@ form.addEventListener("submit", async (event) => {
 
       return { lat, lon, city: place.name, country: place.country };
     })
+    //////////////////////////////////////
     .then((data) => {
       const url1 = `https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&timezone=auto`;
       return fetch(url1)
@@ -45,7 +46,7 @@ form.addEventListener("submit", async (event) => {
           }
           return response.json();
         })
-      
+
         .then((forecast) => {
           const datas = {
             city: data.city,
@@ -56,11 +57,34 @@ form.addEventListener("submit", async (event) => {
             weather_code: forecast.current.weather_code,
             wind_speed: forecast.current.wind_speed_10m,
           };
-          return datas
-          
+          return datas;
         })
         .then((data) => {
           render(data);
+        });
+    })
+    //////////////////////////////////////
+    .then((data) => {
+      return fetch(urldaily)
+        .then((response) => {
+          if(!response.ok){
+            throw new Error("The rest can't be loaded")
+          }
+          return response.json();
+        })
+        .then((data) => {
+          let datasobject = [];
+
+          for (let i = 1; i < 5; i++) {
+            datasobject.push({
+              time: data.daily.time[i],
+              maxtemp: data.daily.temperature_2m_max[i],
+              mintemp: data.daily.temperature_2m_min[i],
+              weather_code: data.daily.weather_code[i],
+            });
+          }
+          
+          return datasobject;
         });
     })
     .catch((error) => {
@@ -71,6 +95,7 @@ form.addEventListener("submit", async (event) => {
     .finally(() => {
       loading.classList.add("hidden");
     });
+  const urldaily = `https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weather_code,temperature_2m_max,temperature_2m_min`;
 });
 
 function render(data) {
@@ -91,27 +116,23 @@ function render(data) {
     month: "long",
     year: "numeric",
   });
-//
+  //
   const wheatherstate = document.createElement("p");
   wheatherstate.className = "mt-1 text-slate-300";
-  const iconnumber = data.weather_code
-  wheatherstate.textContent = WEATHER_CODES[iconnumber].label
-  
-  
+  const iconnumber = data.weather_code;
+  wheatherstate.textContent = WEATHER_CODES[iconnumber].label;
 
   divname.append(h2, date, wheatherstate);
 
   const divweather = document.createElement("div");
   divweather.className = "flex items-center justify-center gap-3";
-  
-    const icon = WEATHER_CODES[iconnumber].icon
+
+  const icon = WEATHER_CODES[iconnumber].icon;
 
   const logo = document.createElement("p");
   logo.className = "text-6xl";
 
-    logo.textContent = icon
-
-
+  logo.textContent = icon;
 
   const temperature = document.createElement("p");
   temperature.className = "text-7xl font-semibold tracking-tight sm:text-8xl";
@@ -145,4 +166,3 @@ function render(data) {
   li.append(divname, divweather, divstats);
   list.prepend(li);
 }
-
