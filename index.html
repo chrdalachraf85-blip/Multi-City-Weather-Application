@@ -6,16 +6,16 @@
     <meta name="theme-color" content="#071421" />
     <title>Weather</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="script.js" defer></script>
+    <script type="module" src="./script.js"></script>
   </head>
-  <body class="min-h-screen bg-[#0b1423] p-0 font-sans text-slate-100 sm:p-4 lg:p-6">
-    <main class="mx-auto min-h-screen max-w-[1700px] overflow-hidden border border-slate-500/70 bg-[#031522] shadow-2xl sm:min-h-[calc(100vh-32px)] sm:rounded-3xl lg:min-h-[calc(100vh-48px)]">
-      <header class="flex flex-col gap-4 border-b border-slate-700/70 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+  <body class="min-h-screen bg-[#0b1423] p-0 font-sans text-slate-100 md:p-4 lg:p-6">
+    <main class="mx-auto min-h-screen max-w-[1700px] overflow-hidden border border-slate-500/70 bg-[#031522] shadow-2xl md:min-h-[calc(100vh-32px)] md:rounded-3xl lg:min-h-[calc(100vh-48px)]">
+      <header class="flex flex-col gap-4 border-b border-slate-700/70 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6 lg:px-8">
         <a href="#" class="flex items-center gap-3 text-2xl font-bold tracking-tight text-white" aria-label="Weather home">
           <svg class="h-9 w-11 text-cyan-400" viewBox="0 0 48 40" fill="none" aria-hidden="true"><path d="M12 30h24a8 8 0 0 0 0-16 12 12 0 0 0-23-2A9 9 0 0 0 12 30Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M24 2v5m-14 1 3 3m23-3-3 3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
           <span>Weather</span>
         </a>
-        <form id="form" class="flex h-11 w-full max-w-md items-center gap-3 rounded-xl border border-cyan-950 bg-[#102b3c] px-4 text-slate-300 shadow-lg sm:mr-2" role="search">
+        <form id="form" class="flex h-11 w-full max-w-md items-center gap-3 rounded-xl border border-cyan-950 bg-[#102b3c] px-4 text-slate-300 shadow-lg md:mr-2" role="search">
           <label for="city-search" class="sr-only">Search for a city</label>
           <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path stroke-linecap="round" d="m16.2 16.2 5 5"/></svg>
           <input id="city-search" type="search" placeholder="Search for a city..." class="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-400" />
@@ -23,10 +23,14 @@
         </form>
       </header>
 
-      <div class="flex min-h-[calc(100vh-100px)] justify-center p-4 sm:p-5 lg:p-6">
-        <section aria-labelledby="forecast-title" class="w-[90%] rounded-2xl border border-cyan-950 bg-gradient-to-br from-[#061c2a] to-[#041824] p-3 sm:p-4 lg:p-5">
-          <ul id="days-cards" class="m-0 list-none space-y-2.5 p-0 [&>li]:mx-auto [&>li]:w-[90%]" aria-label="Five day forecast"></ul>
-          <p id="error-msg" class="hidden mt-5 text-center text-sm text-rose-300" role="alert"></p>
+      <div class="flex min-h-[calc(100vh-9rem)] justify-center p-3 md:min-h-[calc(100vh-8rem)] md:p-5 lg:p-6">
+        <section aria-labelledby="forecast-title" class="w-full rounded-2xl border border-cyan-950 bg-gradient-to-br from-[#061c2a] to-[#041824] p-3 md:p-4 lg:p-5">
+          <ul id="days-cards" class="m-0 grid grid-cols-1 gap-3 p-0 list-none md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-5 [&>li:first-child]:col-span-full [&>li]:mx-auto [&>li]:w-full [&>li]:min-w-0" aria-label="Five day forecast">
+            
+            
+          </ul>
+          <div id="error-msg" class="hidden"></div>
+          
         </section>
       </div>
     </main>
