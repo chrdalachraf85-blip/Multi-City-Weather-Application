@@ -8,8 +8,9 @@ loading.className = "hidden mt-5 text-center text-sm text-slate-300";
 loading.textContent = "Loading...";
 form.after(loading);
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+// form.addEventListener("submit", async (event) => {
+//   event.preventDefault();
+function fetchdata(){
   const city = cityInput.value.trim();
 
   if (!city) {
@@ -118,13 +119,26 @@ form.addEventListener("submit", async (event) => {
     })
     .catch((error) => {
       showerror(error.message);
+      
       message.classList.remove("hidden");
       console.error(error);
     })
     .finally(() => {
       loading.classList.add("hidden");
     });
-});
+};
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  fetchdata()
+
+})
+
+
+
+
+
+
 
 function render(data) {
   list.replaceChildren();
@@ -195,26 +209,6 @@ function render(data) {
   list.prepend(li);
 }
 
-// datasobject.push({
-//               time: data.daily.time[i],
-//               maxtemp: data.daily.temperature_2m_max[i],
-//               mintemp: data.daily.temperature_2m_min[i],
-//               weather_code: data.daily.weather_code[i],
-//             });
-
-/* <li class="mx-auto w-full max-w-xs rounded-2xl border border-white/10 bg-slate-900 p-5 text-white shadow-lg">
-  <p class="text-sm font-medium text-slate-400"></p>
-  <div class="mt-4 flex items-center justify-between">
-    <div>
-      <p class="text-3xl font-semibold">🌤️</p>
-      <p class="mt-2 text-sm text-slate-300">Forecast</p>
-    </div>
-    <div class="text-right">
-      <p class="text-2xl font-semibold"> undefined°</p>
-      <p class="mt-1 text-sm text-slate-400">Low undefined°</p>
-    </div>
-  </div>
-</li>; */
 
 function render5days(data) {
   const li = document.createElement("li");
@@ -279,25 +273,27 @@ function showerror(errorMessage) {
     "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-rose-400 text-2xl font-bold text-rose-400";
   icon.textContent = "!";
 
-  // Create the container used to group the alert text.
   const text = document.createElement("div");
-  // const title = document.createElement("h2");
-  // title.className = "text-lg font-semibold text-rose-300";
-  // title.textContent = "City not found";
+
 
   const description = document.createElement("p");
   description.className = "mt-1 text-sm text-rose-100/80";
-  // Display the error message passed into showerror.
   description.textContent = errorMessage;
   text.append(description);
   content.append(icon, text);
 
   const retryButton = document.createElement("button");
   retryButton.type = "button";
+  retryButton.id = "retry"
   retryButton.className =
     "rounded-xl border border-cyan-400 px-5 py-2.5 font-medium text-cyan-300 transition hover:bg-cyan-400/10 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2 focus:ring-offset-rose-950 sm:ml-auto";
   retryButton.textContent = "Try again";
 
   alert.append(content, retryButton);
   message.replaceChildren(alert);
+  retryButton.addEventListener("click", fetchdata)
 }
+
+
+
+
