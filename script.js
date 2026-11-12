@@ -144,10 +144,10 @@ function render(data) {
   list.replaceChildren();
   const li = document.createElement("li");
   li.className =
-    "grid min-h-[14.4rem] grid-cols-1 items-center gap-6 rounded-[2rem] border border-slate-700 bg-gradient-to-r from-amber-950/70 via-slate-800 to-slate-800 px-6 py-5 shadow-xl sm:grid-cols-[1fr_auto_1fr] sm:px-8 sm:py-[1.8rem]";
+    "grid min-h-[14.4rem] grid-cols-1 items-center gap-5 rounded-[2rem] border border-slate-700 bg-gradient-to-r from-amber-950/70 via-slate-800 to-slate-800 px-4 py-5 shadow-xl md:grid-cols-2 md:gap-6 md:px-6 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8 lg:py-7";
   const divname = document.createElement("div");
   const h2 = document.createElement("h2");
-  h2.className = "text-3xl font-bold sm:text-4xl";
+  h2.className = "text-2xl font-bold md:text-3xl lg:text-4xl";
   h2.textContent = `${data.city} , ${data.country}`;
 
   const date = document.createElement("p");
@@ -167,40 +167,40 @@ function render(data) {
   divname.append(h2, date, wheatherstate);
 
   const divweather = document.createElement("div");
-  divweather.className = "flex items-center justify-center gap-3";
+  divweather.className = "flex min-w-0 items-center justify-center gap-2 md:gap-3";
 
   const icon = WEATHER_CODES[iconnumber].icon;
 
   const logo = document.createElement("p");
-  logo.className = "text-6xl";
+  logo.className = "text-4xl md:text-5xl lg:text-6xl";
 
   logo.textContent = icon;
 
   const temperature = document.createElement("p");
-  temperature.className = "text-7xl font-semibold tracking-tight sm:text-8xl";
+  temperature.className = "text-5xl font-semibold tracking-tight md:text-6xl lg:text-7xl";
   temperature.textContent = `${Math.round(data.temperature)}°C`;
   divweather.append(logo, temperature);
 
   const divstats = document.createElement("div");
-  divstats.className = "grid grid-cols-2 gap-3";
+  divstats.className = "grid min-w-0 grid-cols-1 gap-3 md:col-span-2 md:grid-cols-2 lg:col-span-1";
 
   const divhumidity = document.createElement("div");
-  divhumidity.className = "rounded-2xl bg-slate-950/50 p-4 sm:p-5";
+  divhumidity.className = "min-w-0 rounded-2xl bg-slate-950/50 p-4 md:p-5";
   const humiditytitle = document.createElement("p");
   humiditytitle.className = "text-sm text-slate-300";
   humiditytitle.textContent = "Humidity";
   const humidity = document.createElement("p");
-  humidity.className = "mt-2 text-2xl font-semibold sm:text-3xl";
+  humidity.className = "mt-2 text-xl font-semibold md:text-2xl lg:text-3xl";
   humidity.textContent = `${data.humidity}%`;
   divhumidity.append(humiditytitle, humidity);
 
   const divwind = document.createElement("div");
-  divwind.className = "rounded-2xl bg-slate-950/50 p-4 sm:p-5";
+  divwind.className = "min-w-0 rounded-2xl bg-slate-950/50 p-4 md:p-5";
   const windtitle = document.createElement("p");
   windtitle.className = "text-sm text-slate-300";
   windtitle.textContent = "Wind speed";
   const wind = document.createElement("p");
-  wind.className = "mt-2 text-2xl font-semibold sm:text-3xl";
+  wind.className = "mt-2 text-xl font-semibold md:text-2xl lg:text-3xl";
   wind.textContent = `${data.wind_speed} km/h`;
   divwind.append(windtitle, wind);
 
@@ -213,7 +213,7 @@ function render(data) {
 function render5days(data) {
   const li = document.createElement("li");
   li.className =
-    "mx-auto w-full max-w-xs rounded-2xl border border-white/10 bg-slate-900 p-5 text-white shadow-lg";
+    "mx-auto w-full min-w-0 rounded-2xl border border-white/10 bg-slate-900 p-4 text-white shadow-lg md:p-5";
 
   const date = document.createElement("p");
   date.className = "text-sm font-medium text-slate-400";
@@ -224,7 +224,7 @@ function render5days(data) {
     year: "numeric",
   });
   const details = document.createElement("div");
-  details.className = "mt-4 flex items-center justify-between";
+  details.className = "mt-4 flex min-w-0 items-center justify-between gap-3";
 
   const weather = document.createElement("div");
   const icon = document.createElement("p");
@@ -244,7 +244,7 @@ function render5days(data) {
   temperatures.className = "text-right";
 
   const high = document.createElement("p");
-  high.className = "text-2xl font-semibold";
+  high.className = "text-xl font-semibold md:text-2xl";
   high.textContent = `${data.maxtemp}°`;
 
   const low = document.createElement("p");
@@ -262,10 +262,10 @@ function showerror(errorMessage) {
   const alert = document.createElement("div");
   alert.setAttribute("role", "alert");
   alert.className =
-    "flex flex-col gap-4 rounded-2xl border border-rose-400/70 bg-rose-950/50 p-5 text-rose-100 shadow-lg sm:flex-row sm:items-center";
+    "flex flex-col gap-4 rounded-2xl border border-rose-400/70 bg-rose-950/50 p-4 text-rose-100 shadow-lg md:flex-row md:items-center md:p-5";
 
   const content = document.createElement("div");
-  content.className = "flex items-center gap-4";
+  content.className = "flex min-w-0 items-center gap-4";
 
   const icon = document.createElement("span");
   icon.setAttribute("aria-hidden", "true");
@@ -286,7 +286,7 @@ function showerror(errorMessage) {
   retryButton.type = "button";
   retryButton.id = "retry"
   retryButton.className =
-    "rounded-xl border border-cyan-400 px-5 py-2.5 font-medium text-cyan-300 transition hover:bg-cyan-400/10 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2 focus:ring-offset-rose-950 sm:ml-auto";
+    "w-full rounded-xl border border-cyan-400 px-5 py-2.5 font-medium text-cyan-300 transition hover:bg-cyan-400/10 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2 focus:ring-offset-rose-950 md:ml-auto md:w-auto";
   retryButton.textContent = "Try again";
 
   alert.append(content, retryButton);
