@@ -38,7 +38,13 @@ function fetchdata(){
       return response.json();
     })
     .then((cordinates) => {
+      console.log(cordinates)
+
       const place = cordinates.results?.[0];
+       if(cordinates.results.country !== "Morocco"){
+        throw new Error("you can only search inside morocco")
+       }
+
       if (!place) {
         throw new Error("City not found. Check the spelling and try again.");
       }
